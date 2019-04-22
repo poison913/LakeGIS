@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>实时雨量信息</title>
+</head>
+<link href="Script/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="Script/bootstrap/bootstrap-table.min.css" rel="stylesheet" />
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="Script/bootstrap/bootstrap-table.min.js"></script>
+<script src="Script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
+<script src="Script/Highcharts/highcharts.js"></script>
+<script src="Script/lhgdialog/lhgdialog.min.js"></script>
+<script src="Script/My97DatePicker/WdatePicker.js"></script>
+ <style>
+        .timeCycle .form-control {
+            width: 75px;
+            height: 25px;
+            padding: 0;
+            line-height: 25px;
+        }
+
+        .form-group.timeCycle .on {
+            border: 0;
+            background-color: #347BB9;
+            color: #FFF;
+        }
+
+        .form-group.timeCycle input {
+            background: #FFF;
+        }
+
+        .Wdate {
+            height: 30px;
+            border-color: #D8E1E8;
+            border: #D8E1E8 1px solid;
+        }
+    </style>
+<body>
+<div style="width: 90%;margin: 5%;">
+	<div class="form-inline" style = "width:100%;magin:2%">
+	    <div class="form-group timebox" id="timeBox"  style = "width:100%;magin:2%">
+	    	<label style = "width:70px;float: left;">选择站点：</label>
+	    	<select style = "width:150px;float: left;" id='station'   onchange="Change()"></selct>
+	        <input type="text" id="beginTime_Daily" class="form-control Wdate" style=" width: 150px; float: left; margin-left: 2%;" onClick="WdatePicker()"  />
+	        <span style=" width: 10px; float: left; margin-left: 2%;">至</span>
+	        <input style=" width: 150px; float: left; margin-left: 2%;" type="text" id="endTime_Daily" class="form-control Wdate" style="width:150px;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" />
+	    	<input style=" width: 50px; float: left; margin-left: 2%;" type="button" id="btn_OK" class="btn btn-search btn-primary btn-sm" onclick="initchart()" value="查询" title="查询" />
+	    </div>
+	</div> 
+</div>
+<div id="chart" ></div>
+</body>
+<script>
+var val;
+var text;
+$(function () {
+	$.ajax({
+        type: "get",
+        url: "rainstation.do",
+        success: function (result) {
+            var jObject = JSON.parse(result);
+            for(var ii = 0 ;ii<jObject.length; ii++)
+            {
+            	$("#station").append("<option value='"+jObject[ii].name+"'>"+jObject[ii].name+"</option>");
+            }
+            $("#station").val(jObject[0].name);
+            val =$("#station").val();
+            text = $("#station").find("option:selected").text();
+
+
+            var stm, etm;   //开始时间，结束时间
+        	var etm = new Date();
+        	stm = new Date(etm.getTime() - 7 * 24 * 3600 * 1000);
+            etm = new Date(Date.parse(etm.format("yyyy/MM/dd hh:00:00")));
+
+            
+            $("#beginTime_Daily").val(stm.format("yyyy-MM-dd"));
+            $("#endTime_Daily").val(etm.format("yyyy-MM-dd"));
+            initchart();
+        }
+	})
+	
+})
+function initchart()
+{
+	 var startDate = $("#beginTime_Daily").val();
+     var endDate = $("#endTime_Daily").val();
+     var name = val;
+	$.ajax({
+        type: "get",
+        url: "stationrain.do",
+        data: {
+        	stationname: name,
+        	start: startDate,
+            end: endDate
+        },
+        success: function (result) {
+            var jObject = JSON.parse(result);
+            var date = [];
+            var x = [];
+            for(var ii = 0 ;ii<jObject.length; ii++)
+            {
+            	date.push(jObject[ii].day)
+            	x.push(jObject[ii].inserttime)
+            }
+            name = "";
+            if(jObject.length>0)
+            	name = jObject[0].name;
+            $('#chart').highcharts({
+                title: {
+                    text: name+'雨量站雨量折线图'
+                },
+                credits: {  
+                    enabled: false  
+                }  ,
+                yAxis: {
+                	min: 0,  
+                    title: {  
+                        text: '降雨量'  
+                    },  
+                    formatter:function (){   
+                        return this.value + 'mm' ;   
+                    }  
+                },
+                plotOptions: {
+                    series: {
+                        label: {
+                            connectorAllowed: false
+                        }
+                    }
+                },
+                xAxis: {
+                	categories: x
+                },
+                series: [{
+                    name: '雨量',
+                    data: date
+                }],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
+        }
+    });
+}
+function Change()
+{
+	val =$("#station").val();
+    text = $("#station").find("option:selected").text();
+}
+Date.prototype.format = function(fmt) { 
+    var o = { 
+       "M+" : this.getMonth()+1,                 //月份 
+       "d+" : this.getDate(),                    //日 
+       "h+" : this.getHours(),                   //小时 
+       "m+" : this.getMinutes(),                 //分 
+       "s+" : this.getSeconds(),                 //秒 
+       "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+       "S"  : this.getMilliseconds()             //毫秒 
+   }; 
+   if(/(y+)/.test(fmt)) {
+           fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+   }
+    for(var k in o) {
+       if(new RegExp("("+ k +")").test(fmt)){
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        }
+    }
+   return fmt; 
+}   
+</script>
+</html>

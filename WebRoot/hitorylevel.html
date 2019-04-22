@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="Script/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="Script/Highcharts/highcharts.js"></script>
+<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+</head>
+<body>
+	<div style="width: 90%;margin: 5%;">
+		<div id="Highcharts"  ></div>
+		<div id="chart"  ></div>
+	</div>
+</body>
+<script>
+$(function () {
+	initchart();
+})
+function initchart()
+{
+	$.ajax({
+        type: "get",
+        url: "alllevel.do",
+        success: function (result) { 
+	        var jObject = JSON.parse(result);
+        	var sdata=new Array(); 
+	        var xdata=new Array();
+            for(var ii = 0 ;ii<jObject.length; ii++)
+            {
+            	//xdata.push(jObject[ii].level);
+            	//var t  = jObject[ii].times.replace(/\-/g,",");
+            	var t = jObject[ii].times.split('-');
+            	sdata.push([Date.UTC(Number(t[0]),Number(t[1])-1,Number(t[2])),Number(jObject[ii].level)]);
+            }
+        	$('#chart').highcharts({
+                chart: {
+                    zoomType: 'x'
+                },
+                title: {
+                    text: '宿松站逐日平均水位图'
+                },
+                subtitle: {
+                	text: 'Source: 宿松站'
+                },
+                credits: {  
+                    enabled: false  
+                }  ,
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        millisecond: '%H:%M:%S.%L',
+                        second: '%H:%M:%S',
+                        minute: '%H:%M',
+                        hour: '%H:%M',
+                        day: '%m-%d',
+                        week: '%m-%d',
+                        month: '%Y-%m',
+                        year: '%Y'
+                    }
+                },
+                tooltip: {
+                    dateTimeLabelFormats: {
+                        millisecond: '%H:%M:%S.%L',
+                        second: '%H:%M:%S',
+                        minute: '%H:%M',
+                        hour: '%H:%M',
+                        day: '%Y-%m-%d',
+                        week: '%m-%d',
+                        month: '%Y-%m',
+                        year: '%Y'
+                    }
+                },
+                yAxis: {
+                	//tickPositions: [14, 15, 16,17,18,19,20],
+                    title: {
+                        text: '日平均水位'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                	series:{
+                		turboThreshold: 2000000000000000000000
+                    },
+                	area: {
+                        fillColor: {
+                            linearGradient: {
+                                x1: 0,
+                                y1: 0,
+                                x2: 0,
+                                y2: 1
+                            },
+                            stops: [
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                            ]
+                        },
+                        marker: {
+                            radius: 2
+                        },
+                        lineWidth: 1,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    }
+                },
+                series: [{
+                    type: 'area',
+                    name: '日平均水位',
+                    data: sdata
+                }]
+            });	
+        }
+	})
+
+}
+</script>
+</html>

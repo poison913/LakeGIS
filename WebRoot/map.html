@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>map</title>
+</head>
+<link href="Script/Leaflet/leaflet.css" rel="stylesheet" />
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="Script/Leaflet/leaflet.js"></script>
+<script src="Script/Leaflet/leaflet.ChineseTmsProviders.js"></script>
+<script type="text/javascript" src="Script/Leaflet/Control.MiniMap.min.js"></script>
+<script src="data/manage.json"></script>
+<script src="data/outerline.json"></script>
+<script src="data/protectdata.json"></script>
+<script src="Script/lhgdialog/lhgdialog.min.js"></script>
+<body>
+<div class="main" id="map" style="position: absolute;width:100%;height:100%">			  
+</div>
+</body>
+
+<script type="text/javascript">
+var map;
+$(document).ready(function() {
+	
+	//定义天地图的底图
+    var normalm = L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normala = L.tileLayer.chinaProvider('TianDiTu.Normal.Annotion', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var imgm = L.tileLayer.chinaProvider('TianDiTu.Satellite.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var imga = L.tileLayer.chinaProvider('TianDiTu.Satellite.Annotion', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var terrm = L.tileLayer.chinaProvider('TianDiTu.Terrain.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var terra = L.tileLayer.chinaProvider('TianDiTu.Terrain.Annotion', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+
+    //交通图
+    var normal = L.layerGroup([normalm, normala]);
+    //影像图
+    var image = L.layerGroup([imgm, imga]);
+    //影像图
+    var terr = L.layerGroup([terrm, terra]);
+
+    //基础图层，单选
+    var baseLayers = {
+        "影像": image,
+        "地图": normal,
+        "地形": terr
+    };
+    var manageStyle = {
+    		"color": 'yellow',
+		    "Weight": 50
+		};
+    var outerStyle = {
+    		"color": 'green',
+		    "Weight": 50
+		};
+    var protectStyle = {
+		    "color": 'red',
+		    "strokeWeight": 5,
+		    "fillOpacity": 0
+		};
+    //管理线
+   /*  var managelayer = L.geoJSON(manage, {
+		style: manageStyle,
+		onEachFeature: onEachFeature
+	}); */ 
+	
+    //保护线
+   /*  var protectlayer = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:protectlayer',
+        format: 'image/png',
+        transparent: true
+    }); */
+    
+   //乡镇行政区划
+    var xzxzqh = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:xzxzqh',
+        format: 'image/png',
+        transparent: true
+    });
+   //保护线_分乡镇
+    var protectcounty = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:protectcounty',
+        format: 'image/png',
+        transparent: true
+    });
+   //南部永久防洪堤内线
+    var dike = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:dike',
+        format: 'image/png',
+        transparent: true
+    });
+   //外围线outdata
+    /* var outerline = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:outerline',
+        format: 'image/png',
+        transparent: true
+    }); */
+   
+   //建制镇和村庄分布
+    var cunzhen = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:cunzhen',
+        format: 'image/png',
+        transparent: true
+    });
+   //水域线
+    var water = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:water',
+        format: 'image/png',
+        transparent: true
+    });
+  //水域线_分乡镇
+    var watercounty = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:watercounty',
+        format: 'image/png',
+        transparent: true
+    });
+  //河流水库水面
+    var surface = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:surface',
+        format: 'image/png',
+        transparent: true
+    });
+  //管理线
+    var manageline = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:manage',
+        format: 'image/png',
+        transparent: true
+    });
+  //管理线_分乡镇
+    var managecounty = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:managecounty',
+        format: 'image/png',
+        transparent: true
+    });
+  //蓄滞洪区线
+    var inningcounty = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:inningcounty',
+        format: 'image/png',
+        transparent: true
+    });
+  //蓄滞洪区线
+    var Flood = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:Flood',
+        format: 'image/png',
+        transparent: true
+    });
+  //保护线节点
+    var BHXJD = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:BHXJD',
+        format: 'image/png',
+        transparent: true
+    });
+  //大官湖核心区
+    var DGHHXQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:DGHHXQ1',
+        format: 'image/png',
+        transparent: true
+    });
+  //大官湖缓冲区
+   var DGHHCQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:DGHHCQ',
+        format: 'image/png',
+        transparent: true
+    });
+  //黄大湖实验区
+  var HDHSYQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:HDHSYQ',
+        format: 'image/png',
+        transparent: true
+    });
+  //黄大湖边界
+   var HDHBJ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:HDHBJ',
+        format: 'image/png',
+        transparent: true
+    });
+  //黄湖核心区
+  var HHHXQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:HHHXQ',
+        format: 'image/png',
+        transparent: true
+    });
+//黄湖缓冲区
+  var HHHCQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:HHHCQ',
+        format: 'image/png',
+        transparent: true
+    });
+    //龙感湖实验区
+    var LGHSYQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:LGHSYQ',
+        format: 'image/png',
+        transparent: true
+    });
+  //龙感湖核心区
+    var LGHHXQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:LGHHXQ',
+        format: 'image/png',
+        transparent: true
+    });
+  //龙感湖缓冲区
+    var LGHHCQ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:LGHHCQ',
+        format: 'image/png',
+        transparent: true
+    });
+  //龙感湖边界
+    var LGHBJ = L.tileLayer.wms("http://120.55.56.109:8080/geoserver/lake/wms?service=WMS", {
+        layers: 'lake:LGHBJ',
+        format: 'image/png',
+        transparent: true
+    });
+    //叠加图层，多选
+    var overlayLayers = {
+        "乡镇行政区划":xzxzqh,
+        "保护线_分乡镇":protectcounty,
+        "南部永久防洪堤内线":dike,
+        "建制镇和村庄分布":cunzhen,
+        "水域线":water,
+        "水域线_分乡镇":watercounty,
+        "河流水库水面":surface,
+        "管理线_分乡镇":managecounty,
+        "蓄滞洪区线":Flood,
+        "非法围垦_分乡镇":inningcounty,
+        "保护线节点":BHXJD,
+        "大官湖核心区":DGHHXQ,
+        "大官湖缓冲区":DGHHCQ,
+        "黄大湖实验区":HDHSYQ,
+        "黄大湖边界":HDHBJ,
+        "黄湖核心区":HHHXQ,
+        "黄湖缓冲区":HHHCQ,
+        "龙感湖实验区":LGHSYQ,
+        "龙感湖核心区":LGHHXQ,
+        "龙感湖缓冲区":LGHHCQ,
+        "龙感湖边界":LGHBJ
+        
+    };
+    
+    var map = L.map("map", {
+        center: [30.05008, 116.38916 ],
+        zoom: 10,
+        layers: [image]
+    });
+    
+    var layercontrol = L.control.layers(baseLayers, overlayLayers).addTo(map);
+
+   /*  var imgmg11 = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var imgag11 = L.tileLayer.chinaProvider('GaoDe.Satellite.Annotion', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var gaode11 = L.layerGroup([imgmg11,imgag11]);
+    var miniMap = new L.Control.MiniMap(gaode11, { toggleDisplay: true, collapsedWidth: 15, collapsedHeight: 15 }).addTo(map);   */
+    //添加管理线
+    $.ajax({ 
+		type: "GET",
+	    url: "http://120.55.56.109:8080/geoserver/lake/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=lake:managelayer&outputFormat=application%2Fjson", 
+	    //dataType : 'json',
+	    success: function (data){
+	    	//data = JSON.parse(data);
+	    	//alert('yes')
+	    	managelayer = L.geoJSON(data, {
+	    		style: manageStyle,
+	    		onEachFeature: onEachFeature
+	     	}); 
+	         layercontrol.addOverlay(managelayer,"管理线");
+	    },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {      
+            alert("请求失败！");
+        }
+    });  
+  //添加外围线
+    $.ajax({ 
+		type: "GET",
+	    url: "http://120.55.56.109:8080/geoserver/lake/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=lake:outerline&outputFormat=application%2Fjson", 
+	    //dataType : 'json',
+	    success: function (data){
+	    	//data = JSON.parse(data);
+	    	//alert('yes')
+	    	 var outerline = L.geoJSON(data, {
+				style: outerStyle,
+				onEachFeature: onEachFeature
+			}); 
+	         layercontrol.addOverlay(outerline,"外围线");
+	    },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {      
+            alert("请求失败！");
+        }
+    });  
+  //添加保护线
+    $.ajax({ 
+		type: "GET",
+	    url: "http://120.55.56.109:8080/geoserver/lake/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=lake:protectlayer&outputFormat=application%2Fjson", 
+	    //dataType : 'json',
+	    success: function (data){
+	    	//data = JSON.parse(data);
+	    	//alert('yes')
+	    	var protectlayer = L.geoJSON(data, {
+				style: protectStyle,
+				onEachFeature: onEachFeature
+			}); 
+	         layercontrol.addOverlay(protectlayer,"保护线");
+	    },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {      
+            alert("请求失败！");
+        }
+    });  
+  //添加
+    $.ajax({ 
+		type: "GET",
+	    url: "http://120.55.56.109:8080/geoserver/lake/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=lake:GLXselectJD&outputFormat=application%2Fjson", 
+	    //dataType : 'json',
+	    success: function (data){
+	    	//data = JSON.parse(data);
+	    	//alert('yes')
+	    	var managequery = L.geoJSON(data, {
+	    		pointToLayer: function (feature, latlng) {
+	    			var marker = L.circleMarker(latlng, {
+	    				radius: 8,
+	    				fillColor: "#ff7800",
+	    				color: "#000",
+	    				weight: 1,
+	    				opacity: 1,
+	    				fillOpacity: 0.8
+	    			});
+	    			var bianma = feature.properties.编码;
+	    			marker.on('click', function(e) {
+	    				  console.log(e);
+	    				  $.dialog({
+	    				        id: "lhdg1999",
+	    				        title: '管理线拐点信息',
+	    				        content: "url:pdf/"+bianma+".pdf",
+	    				        width: 700,
+	    				        height: 540,
+	    				        zIndex: 9999,
+	    				        lock: true
+	    				    });	
+	    				})
+	    			return marker;
+	    		}
+				//onEachFeature: onEachFeature
+			}); 
+	         layercontrol.addOverlay(managequery,"管理线拐点查询");
+	    },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {      
+            alert("请求失败！");
+        }
+    });  
+})
+function onEachFeature(feature, layer) {
+		var popupContent = "类型： " +
+				feature.geometry.type +"</br>";
+
+		
+		for(var i in feature.properties){//用javascript的for/in循环遍历对象的属性 
+			popupContent += i+":"+feature.properties[i]+"</br>"; 
+		}
+		
+		layer.bindPopup(popupContent);
+	}
+function loadWFS(layerName,epsg){  
+   
+    var u = layerName;  
+    $.ajax({  
+        url: u,   
+        dataType:'json',  
+        success:loadWfsHandler,  
+    });  
+    var layer;  
+    function loadWfsHandler(data){  
+        console.log(data);  
+        layer = L.geoJson(data,{  
+            style: manageStyle,
+    		onEachFeature: onEachFeature
+        }); 
+        return layer
+    }  
+}  
+</script>
+</html>

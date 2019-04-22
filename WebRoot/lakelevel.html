@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>实时湖泊水位信息</title>
+</head>
+<link href="Script/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="Script/bootstrap/bootstrap-table.min.css" rel="stylesheet" />
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="Script/bootstrap/bootstrap-table.min.js"></script>
+<script src="Script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
+<script src="Script/Highcharts/highcharts.js"></script>
+<script src="Script/lhgdialog/lhgdialog.min.js"></script>
+<script src="Script/My97DatePicker/WdatePicker.js"></script>
+<body>
+	<div style="width: 90%;margin: 5%;">
+		<div class="form-inline">
+		    <div class="form-group timebox" id="timeBox"  >
+		        <input type="text" id="beginTime_Daily" class="form-control Wdate" style=" width: 40%; float: left; margin-left: 2%;" onClick="WdatePicker()"  />
+		        <span style=" width: 5%; float: left; margin-left: 2%;">至</span>
+		        <input style=" width: 40%; float: left; margin-left: 2%;" type="text" id="endTime_Daily" class="form-control Wdate" style="width:150px;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" />
+		    </div>
+		    <input type="button" id="btn_OK" class="btn btn-search btn-primary btn-sm" onclick="initTable()" value="查询" title="查询" />
+		</div>
+		<div id="table"  class="table-responsive"></div>
+	</div>
+</body>
+<script>
+$(document).ready(function() {
+	var stm, etm;   //开始时间，结束时间
+	var etm = new Date();
+	stm = new Date(etm.getTime() - 7 * 24 * 3600 * 1000);
+    etm = new Date(Date.parse(etm.format("yyyy/MM/dd hh:00:00")));
+
+    
+    $("#beginTime_Daily").val(stm.format("yyyy-MM-dd"));
+    $("#endTime_Daily").val(etm.format("yyyy-MM-dd"));
+	initTable();
+})
+function initTable()
+{
+	 var startDate = $("#beginTime_Daily").val();
+     var endDate = $("#endTime_Daily").val();
+     $(".form-inline").hide();
+	 stm = new Date(new Date().getTime() - 2 * 24 * 3600 * 1000);
+	 startDate = stm.format("yyyy-MM-dd");
+	$.ajax({
+	    url: 'stationlake.do',
+	    type: 'get',
+	    data: {
+        	start: startDate,
+            end: endDate
+        },
+	    success: function(data){
+	    	if (data == null || data == "") { return; }
+            var obj = JSON.parse(data);
+	    	$('#table').bootstrapTable('destroy').bootstrapTable({
+                data: obj,
+                cache: false,
+                pagination: true,
+                pageSize: 10,
+                pageList: [10, 25],
+                columns: [{
+                	field: 'Name',
+                    title: '序号',
+                	formatter: function (value, row, index) {
+						return index + 1;
+                    }
+                }, {
+                    field: 'lakename',
+                    title: '站名'
+                }, {
+                    field: 'inserttime',
+                    title: '时间',
+                    sortable : true
+                }, {
+                    field: 'todaylevel',
+                    title: '水位（m）',
+                    sortable : true
+                }, {
+                    field: 'leveldiff',
+                    title: '比昨日+涨-落（m）'
+                }, {
+                    field: 'storage',
+                    title: '蓄水量（百万方）'
+                }, {
+                    field: 'yihong',
+                    title: '溢洪道控制'
+                }, {
+                    field: 'xiehong',
+                    title: '泄洪洞控制'
+                }, {
+                    field: 'guangai',
+                    title: '灌溉洞控制'
+                }, {
+                    field: 'shushui',
+                    title: '输水洞控制'
+                }, {
+                    field: 'fadiandong',
+                    title: '发电洞控制'
+                }, {
+                    field: 'flow',
+                    title: '出库流量'
+                }, {
+                    field: 'controllevel',
+                    title: '汛限水位（m）'
+                }, {
+                    field: 'topper',
+                    title: '历史最高水位（m）'
+                }, {
+                    field: 'toppertime',
+                    title: '发生时间'
+                }]
+            });
+	    },
+	    error: function(){
+	          
+	    }
+	 })
+	 
+}
+Date.prototype.format = function(fmt) { 
+    var o = { 
+       "M+" : this.getMonth()+1,                 //月份 
+       "d+" : this.getDate(),                    //日 
+       "h+" : this.getHours(),                   //小时 
+       "m+" : this.getMinutes(),                 //分 
+       "s+" : this.getSeconds(),                 //秒 
+       "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+       "S"  : this.getMilliseconds()             //毫秒 
+   }; 
+   if(/(y+)/.test(fmt)) {
+           fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+   }
+    for(var k in o) {
+       if(new RegExp("("+ k +")").test(fmt)){
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        }
+    }
+   return fmt; 
+}   
+</script>
+</html>

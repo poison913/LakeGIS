@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>非法围垦</title>
+
+<link href="Script/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="Script/Highcharts/highcharts.js"></script>
+<script>
+var val;
+var text;
+$(function () {
+	$.ajax({
+        type: "get",
+        url: "getzhen.do",
+        success: function (result) {
+            var jObject = JSON.parse(result);
+            for(var ii = 0 ;ii<jObject.length; ii++)
+            {
+            	$("#zhen").append("<option value='"+jObject[ii].zhen+"'>"+jObject[ii].zhenname+"</option>");
+            }
+            $("#zhen").val(jObject[0].zhen);
+            val =$("#zhen").val();
+            text = $("#zhen").find("option:selected").text();
+            initchart();
+        }
+	})
+    
+})
+function initchart()
+{
+	
+	$.ajax({
+        type: "get",
+        url: "Zhendata.do",
+        data: {
+        	zhen: val
+        },
+        success: function (result) {
+            var jObject = JSON.parse(result);
+            var data = [];
+            for(var ii = 0 ;ii<jObject.length; ii++)
+            {
+            	var item = [];
+            	item.push(jObject[ii].dlmc);
+            	item.push(Number(jObject[ii].areaha));
+            	data.push(item);
+            }
+            $('#chart1').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text:text+'土地利用类型'
+                },
+                credits: {  
+                    enabled: false  
+                }  ,
+                xAxis: {
+                    type: 'category',
+                    labels: {
+                        rotation: -45,
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '公顷'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                tooltip: {
+                    pointFormat: '面积: <b>{point.y:.1f} 公顷</b>'
+                },
+                series: [{
+                    name: '土地利用类型',
+                    data: data,
+                    dataLabels: {
+                        enabled: true,
+                        rotation: -90,
+                        color: '#FFFFFF',
+                        align: 'right',
+                        format: '{point.y:.1f}', // one decimal
+                        y: 10, // 10 pixels down from the top
+                        style: {
+                            fontSize: '13px',
+                            fontFamily: 'Verdana, sans-serif'
+                        }
+                    }
+                }]
+            });
+            $('#chart2').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false
+                },
+                credits: {  
+                    enabled: false  
+                }  ,
+                title: {
+                    text: text+'土地利用类型'
+                },
+                tooltip: {
+                    headerFormat: '{series.name}<br>',
+                    pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: '土地利用类型',
+                    data: data,
+                }]
+            });
+        }
+    });
+}  
+function Change()
+{
+	val =$("#zhen").val();
+    text = $("#zhen").find("option:selected").text();
+    initchart();
+}
+</script>
+</head>
+<body>
+<div style="width: 90%;">
+	<table>
+		<tr>
+			<td style="width: 50%;"><div id="chart1"></div></td>
+			<td style="width: 50%;"><div id="chart2"></div></td>
+		</tr>
+	</table>	
+	<div >
+		<label class="control-label" style = "width:80px;float:left">选择镇：</label>
+		<select style = "width:150px" id='zhen' onchange="Change()"></selct>
+	</div>
+	
+</div>
+
+</body>
+</html>

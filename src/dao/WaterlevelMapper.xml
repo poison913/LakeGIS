@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.WaterlevelMapper" >
+  <resultMap id="BaseResultMap" type="entity.Waterlevel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="xianname" property="xianname" jdbcType="VARCHAR" />
+    <result column="lakename" property="lakename" jdbcType="VARCHAR" />
+    <result column="todaylevel" property="todaylevel" jdbcType="VARCHAR" />
+    <result column="leveldiff" property="leveldiff" jdbcType="VARCHAR" />
+    <result column="storage" property="storage" jdbcType="VARCHAR" />
+    <result column="yihong" property="yihong" jdbcType="VARCHAR" />
+    <result column="xiehong" property="xiehong" jdbcType="VARCHAR" />
+    <result column="guangai" property="guangai" jdbcType="VARCHAR" />
+    <result column="shushui" property="shushui" jdbcType="VARCHAR" />
+    <result column="fadiandong" property="fadiandong" jdbcType="VARCHAR" />
+    <result column="flow" property="flow" jdbcType="VARCHAR" />
+    <result column="controllevel" property="controllevel" jdbcType="VARCHAR" />
+    <result column="topper" property="topper" jdbcType="VARCHAR" />
+    <result column="toppertime" property="toppertime" jdbcType="VARCHAR" />
+    <result column="inserttime" property="inserttime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, xianname, lakename, todaylevel, leveldiff, storage, yihong, xiehong, guangai, 
+    shushui, fadiandong, flow, controllevel, topper, toppertime, inserttime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from waterlevel
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="stationlakelevel" resultMap="BaseResultMap"  >
+    select *  from waterlevel
+    where  inserttime <![CDATA[ > ]]>  #{start,jdbcType=DATE} and inserttime <![CDATA[ <= ]]> #{end,jdbcType=DATE}
+    order by  inserttime desc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from waterlevel
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="entity.Waterlevel" >
+    insert into waterlevel (id, xianname, lakename, 
+      todaylevel, leveldiff, storage, 
+      yihong, xiehong, guangai, 
+      shushui, fadiandong, flow, 
+      controllevel, topper, toppertime, 
+      inserttime)
+    values (#{id,jdbcType=INTEGER}, #{xianname,jdbcType=VARCHAR}, #{lakename,jdbcType=VARCHAR}, 
+      #{todaylevel,jdbcType=VARCHAR}, #{leveldiff,jdbcType=VARCHAR}, #{storage,jdbcType=VARCHAR}, 
+      #{yihong,jdbcType=VARCHAR}, #{xiehong,jdbcType=VARCHAR}, #{guangai,jdbcType=VARCHAR}, 
+      #{shushui,jdbcType=VARCHAR}, #{fadiandong,jdbcType=VARCHAR}, #{flow,jdbcType=VARCHAR}, 
+      #{controllevel,jdbcType=VARCHAR}, #{topper,jdbcType=VARCHAR}, #{toppertime,jdbcType=VARCHAR}, 
+      #{inserttime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="entity.Waterlevel" >
+    insert into waterlevel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="xianname != null" >
+        xianname,
+      </if>
+      <if test="lakename != null" >
+        lakename,
+      </if>
+      <if test="todaylevel != null" >
+        todaylevel,
+      </if>
+      <if test="leveldiff != null" >
+        leveldiff,
+      </if>
+      <if test="storage != null" >
+        storage,
+      </if>
+      <if test="yihong != null" >
+        yihong,
+      </if>
+      <if test="xiehong != null" >
+        xiehong,
+      </if>
+      <if test="guangai != null" >
+        guangai,
+      </if>
+      <if test="shushui != null" >
+        shushui,
+      </if>
+      <if test="fadiandong != null" >
+        fadiandong,
+      </if>
+      <if test="flow != null" >
+        flow,
+      </if>
+      <if test="controllevel != null" >
+        controllevel,
+      </if>
+      <if test="topper != null" >
+        topper,
+      </if>
+      <if test="toppertime != null" >
+        toppertime,
+      </if>
+      <if test="inserttime != null" >
+        inserttime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="xianname != null" >
+        #{xianname,jdbcType=VARCHAR},
+      </if>
+      <if test="lakename != null" >
+        #{lakename,jdbcType=VARCHAR},
+      </if>
+      <if test="todaylevel != null" >
+        #{todaylevel,jdbcType=VARCHAR},
+      </if>
+      <if test="leveldiff != null" >
+        #{leveldiff,jdbcType=VARCHAR},
+      </if>
+      <if test="storage != null" >
+        #{storage,jdbcType=VARCHAR},
+      </if>
+      <if test="yihong != null" >
+        #{yihong,jdbcType=VARCHAR},
+      </if>
+      <if test="xiehong != null" >
+        #{xiehong,jdbcType=VARCHAR},
+      </if>
+      <if test="guangai != null" >
+        #{guangai,jdbcType=VARCHAR},
+      </if>
+      <if test="shushui != null" >
+        #{shushui,jdbcType=VARCHAR},
+      </if>
+      <if test="fadiandong != null" >
+        #{fadiandong,jdbcType=VARCHAR},
+      </if>
+      <if test="flow != null" >
+        #{flow,jdbcType=VARCHAR},
+      </if>
+      <if test="controllevel != null" >
+        #{controllevel,jdbcType=VARCHAR},
+      </if>
+      <if test="topper != null" >
+        #{topper,jdbcType=VARCHAR},
+      </if>
+      <if test="toppertime != null" >
+        #{toppertime,jdbcType=VARCHAR},
+      </if>
+      <if test="inserttime != null" >
+        #{inserttime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="entity.Waterlevel" >
+    update waterlevel
+    <set >
+      <if test="xianname != null" >
+        xianname = #{xianname,jdbcType=VARCHAR},
+      </if>
+      <if test="lakename != null" >
+        lakename = #{lakename,jdbcType=VARCHAR},
+      </if>
+      <if test="todaylevel != null" >
+        todaylevel = #{todaylevel,jdbcType=VARCHAR},
+      </if>
+      <if test="leveldiff != null" >
+        leveldiff = #{leveldiff,jdbcType=VARCHAR},
+      </if>
+      <if test="storage != null" >
+        storage = #{storage,jdbcType=VARCHAR},
+      </if>
+      <if test="yihong != null" >
+        yihong = #{yihong,jdbcType=VARCHAR},
+      </if>
+      <if test="xiehong != null" >
+        xiehong = #{xiehong,jdbcType=VARCHAR},
+      </if>
+      <if test="guangai != null" >
+        guangai = #{guangai,jdbcType=VARCHAR},
+      </if>
+      <if test="shushui != null" >
+        shushui = #{shushui,jdbcType=VARCHAR},
+      </if>
+      <if test="fadiandong != null" >
+        fadiandong = #{fadiandong,jdbcType=VARCHAR},
+      </if>
+      <if test="flow != null" >
+        flow = #{flow,jdbcType=VARCHAR},
+      </if>
+      <if test="controllevel != null" >
+        controllevel = #{controllevel,jdbcType=VARCHAR},
+      </if>
+      <if test="topper != null" >
+        topper = #{topper,jdbcType=VARCHAR},
+      </if>
+      <if test="toppertime != null" >
+        toppertime = #{toppertime,jdbcType=VARCHAR},
+      </if>
+      <if test="inserttime != null" >
+        inserttime = #{inserttime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="entity.Waterlevel" >
+    update waterlevel
+    set xianname = #{xianname,jdbcType=VARCHAR},
+      lakename = #{lakename,jdbcType=VARCHAR},
+      todaylevel = #{todaylevel,jdbcType=VARCHAR},
+      leveldiff = #{leveldiff,jdbcType=VARCHAR},
+      storage = #{storage,jdbcType=VARCHAR},
+      yihong = #{yihong,jdbcType=VARCHAR},
+      xiehong = #{xiehong,jdbcType=VARCHAR},
+      guangai = #{guangai,jdbcType=VARCHAR},
+      shushui = #{shushui,jdbcType=VARCHAR},
+      fadiandong = #{fadiandong,jdbcType=VARCHAR},
+      flow = #{flow,jdbcType=VARCHAR},
+      controllevel = #{controllevel,jdbcType=VARCHAR},
+      topper = #{topper,jdbcType=VARCHAR},
+      toppertime = #{toppertime,jdbcType=VARCHAR},
+      inserttime = #{inserttime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

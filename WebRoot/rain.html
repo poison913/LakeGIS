@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>实时雨量信息</title>
+</head>
+<link href="Script/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="Script/bootstrap/bootstrap-table.min.css" rel="stylesheet" />
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="Script/bootstrap/bootstrap-table.min.js"></script>
+<script src="Script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
+<script src="Script/Highcharts/highcharts.js"></script>
+<script src="Script/lhgdialog/lhgdialog.min.js"></script>
+<body>
+	<div style="width: 80%;margin: 5%;">
+		<div id="table"  class="table-responsive"></div>
+	</div>
+</body>
+<script>
+$(document).ready(function() {
+	initTable();
+})
+function initTable()
+{
+	$.ajax({
+	    url: 'todayrain.do',
+	    type: 'get',
+	    success: function(data){
+	    	if (data == null || data == "") { return; }
+            var obj = JSON.parse(data);
+	    	$('#table').bootstrapTable('destroy').bootstrapTable({
+	    		/* onClickRow: function (row) {  
+	    		    showchart(row)  
+    		  	},   */
+                data: obj,
+                cache: false,          
+                pagination: true,
+                pageSize: 10,
+                pageList: [10, 25],
+                columns: [{
+                	field: 'Name',
+                    title: '序号',
+                	formatter: function (value, row, index) {
+						return index + 1;
+                    }
+                }, {
+                    field: 'name',
+                    title: '站名'
+                }, {
+                    field: 'day',
+                    title: '日雨量（mm）',
+                    sortable : true
+                }, {
+                    field: 'weather',
+                    title: '天气'
+                }, {
+                    field: 'xun',
+                    title: '旬雨量（mm）'
+                }, {
+                    field: 'month',
+                    title: '月雨量（mm）'
+                }]
+            });
+	    },
+	    error: function(){
+	          
+	    }
+	 })
+	 
+}
+function showchart(row)
+{
+	console.log(row.name);
+	$.dialog({
+        id: "lhdg1999",
+        title: row.name,
+        content: "url:rainchart.html?name="+row.name,
+        width: 900,
+        height: 540,
+        zIndex: 9999,
+        lock: true
+    });	
+}
+</script>
+</html>

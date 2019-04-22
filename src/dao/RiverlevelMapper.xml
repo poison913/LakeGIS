@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.RiverlevelMapper" >
+  <resultMap id="BaseResultMap" type="entity.Riverlevel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="rivername" property="rivername" jdbcType="VARCHAR" />
+    <result column="stationname" property="stationname" jdbcType="VARCHAR" />
+    <result column="protectlevel" property="protectlevel" jdbcType="VARCHAR" />
+    <result column="alertlevel" property="alertlevel" jdbcType="VARCHAR" />
+    <result column="todaylevel" property="todaylevel" jdbcType="VARCHAR" />
+    <result column="leceldiff" property="leceldiff" jdbcType="VARCHAR" />
+    <result column="flow" property="flow" jdbcType="VARCHAR" />
+    <result column="sluicelevel" property="sluicelevel" jdbcType="VARCHAR" />
+    <result column="sluicediff" property="sluicediff" jdbcType="VARCHAR" />
+    <result column="sluiceopen" property="sluiceopen" jdbcType="VARCHAR" />
+    <result column="changjiangtop" property="changjiangtop" jdbcType="VARCHAR" />
+    <result column="changjiangtime" property="changjiangtime" jdbcType="VARCHAR" />
+    <result column="rivertop" property="rivertop" jdbcType="VARCHAR" />
+    <result column="rivertoptime" property="rivertoptime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rivername, stationname, protectlevel, alertlevel, todaylevel, leceldiff, flow, 
+    sluicelevel, sluicediff, sluiceopen, changjiangtop, changjiangtime, rivertop, rivertoptime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from riverlevel
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="AllRiverlevel" resultMap="BaseResultMap" >
+    select * from riverlevel
+     where inserttime = #{inserttime,jdbcType=DATE}
+  </select>
+  <select id="getriverstation" resultMap="BaseResultMap" >
+    select distinct stationname from riverlevel order by stationname 
+  </select>
+  <select id="stationRiverlevel" resultMap="BaseResultMap"  >
+    select * from riverlevel
+    where stationname =#{name,jdbcType=VARCHAR} 
+    and  inserttime <![CDATA[ > ]]>  #{start,jdbcType=DATE} and inserttime <![CDATA[ <= ]]> #{end,jdbcType=DATE}
+    order by  inserttime
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from riverlevel
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="entity.Riverlevel" >
+    insert into riverlevel (id, rivername, stationname, 
+      protectlevel, alertlevel, todaylevel, 
+      leceldiff, flow, sluicelevel, 
+      sluicediff, sluiceopen, changjiangtop, 
+      changjiangtime, rivertop, rivertoptime
+      )
+    values (#{id,jdbcType=INTEGER}, #{rivername,jdbcType=VARCHAR}, #{stationname,jdbcType=VARCHAR}, 
+      #{protectlevel,jdbcType=VARCHAR}, #{alertlevel,jdbcType=VARCHAR}, #{todaylevel,jdbcType=VARCHAR}, 
+      #{leceldiff,jdbcType=VARCHAR}, #{flow,jdbcType=VARCHAR}, #{sluicelevel,jdbcType=VARCHAR}, 
+      #{sluicediff,jdbcType=VARCHAR}, #{sluiceopen,jdbcType=VARCHAR}, #{changjiangtop,jdbcType=VARCHAR}, 
+      #{changjiangtime,jdbcType=VARCHAR}, #{rivertop,jdbcType=VARCHAR}, #{rivertoptime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="entity.Riverlevel" >
+    insert into riverlevel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="rivername != null" >
+        rivername,
+      </if>
+      <if test="stationname != null" >
+        stationname,
+      </if>
+      <if test="protectlevel != null" >
+        protectlevel,
+      </if>
+      <if test="alertlevel != null" >
+        alertlevel,
+      </if>
+      <if test="todaylevel != null" >
+        todaylevel,
+      </if>
+      <if test="leceldiff != null" >
+        leceldiff,
+      </if>
+      <if test="flow != null" >
+        flow,
+      </if>
+      <if test="sluicelevel != null" >
+        sluicelevel,
+      </if>
+      <if test="sluicediff != null" >
+        sluicediff,
+      </if>
+      <if test="sluiceopen != null" >
+        sluiceopen,
+      </if>
+      <if test="changjiangtop != null" >
+        changjiangtop,
+      </if>
+      <if test="changjiangtime != null" >
+        changjiangtime,
+      </if>
+      <if test="rivertop != null" >
+        rivertop,
+      </if>
+      <if test="rivertoptime != null" >
+        rivertoptime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="rivername != null" >
+        #{rivername,jdbcType=VARCHAR},
+      </if>
+      <if test="stationname != null" >
+        #{stationname,jdbcType=VARCHAR},
+      </if>
+      <if test="protectlevel != null" >
+        #{protectlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="alertlevel != null" >
+        #{alertlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="todaylevel != null" >
+        #{todaylevel,jdbcType=VARCHAR},
+      </if>
+      <if test="leceldiff != null" >
+        #{leceldiff,jdbcType=VARCHAR},
+      </if>
+      <if test="flow != null" >
+        #{flow,jdbcType=VARCHAR},
+      </if>
+      <if test="sluicelevel != null" >
+        #{sluicelevel,jdbcType=VARCHAR},
+      </if>
+      <if test="sluicediff != null" >
+        #{sluicediff,jdbcType=VARCHAR},
+      </if>
+      <if test="sluiceopen != null" >
+        #{sluiceopen,jdbcType=VARCHAR},
+      </if>
+      <if test="changjiangtop != null" >
+        #{changjiangtop,jdbcType=VARCHAR},
+      </if>
+      <if test="changjiangtime != null" >
+        #{changjiangtime,jdbcType=VARCHAR},
+      </if>
+      <if test="rivertop != null" >
+        #{rivertop,jdbcType=VARCHAR},
+      </if>
+      <if test="rivertoptime != null" >
+        #{rivertoptime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="entity.Riverlevel" >
+    update riverlevel
+    <set >
+      <if test="rivername != null" >
+        rivername = #{rivername,jdbcType=VARCHAR},
+      </if>
+      <if test="stationname != null" >
+        stationname = #{stationname,jdbcType=VARCHAR},
+      </if>
+      <if test="protectlevel != null" >
+        protectlevel = #{protectlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="alertlevel != null" >
+        alertlevel = #{alertlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="todaylevel != null" >
+        todaylevel = #{todaylevel,jdbcType=VARCHAR},
+      </if>
+      <if test="leceldiff != null" >
+        leceldiff = #{leceldiff,jdbcType=VARCHAR},
+      </if>
+      <if test="flow != null" >
+        flow = #{flow,jdbcType=VARCHAR},
+      </if>
+      <if test="sluicelevel != null" >
+        sluicelevel = #{sluicelevel,jdbcType=VARCHAR},
+      </if>
+      <if test="sluicediff != null" >
+        sluicediff = #{sluicediff,jdbcType=VARCHAR},
+      </if>
+      <if test="sluiceopen != null" >
+        sluiceopen = #{sluiceopen,jdbcType=VARCHAR},
+      </if>
+      <if test="changjiangtop != null" >
+        changjiangtop = #{changjiangtop,jdbcType=VARCHAR},
+      </if>
+      <if test="changjiangtime != null" >
+        changjiangtime = #{changjiangtime,jdbcType=VARCHAR},
+      </if>
+      <if test="rivertop != null" >
+        rivertop = #{rivertop,jdbcType=VARCHAR},
+      </if>
+      <if test="rivertoptime != null" >
+        rivertoptime = #{rivertoptime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="entity.Riverlevel" >
+    update riverlevel
+    set rivername = #{rivername,jdbcType=VARCHAR},
+      stationname = #{stationname,jdbcType=VARCHAR},
+      protectlevel = #{protectlevel,jdbcType=VARCHAR},
+      alertlevel = #{alertlevel,jdbcType=VARCHAR},
+      todaylevel = #{todaylevel,jdbcType=VARCHAR},
+      leceldiff = #{leceldiff,jdbcType=VARCHAR},
+      flow = #{flow,jdbcType=VARCHAR},
+      sluicelevel = #{sluicelevel,jdbcType=VARCHAR},
+      sluicediff = #{sluicediff,jdbcType=VARCHAR},
+      sluiceopen = #{sluiceopen,jdbcType=VARCHAR},
+      changjiangtop = #{changjiangtop,jdbcType=VARCHAR},
+      changjiangtime = #{changjiangtime,jdbcType=VARCHAR},
+      rivertop = #{rivertop,jdbcType=VARCHAR},
+      rivertoptime = #{rivertoptime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

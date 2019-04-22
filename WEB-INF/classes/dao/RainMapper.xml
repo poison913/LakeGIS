@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.RainMapper" >
+  <resultMap id="BaseResultMap" type="entity.Rain" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="day" property="day" jdbcType="DOUBLE" />
+    <result column="weather" property="weather" jdbcType="VARCHAR" />
+    <result column="xun" property="xun" jdbcType="DOUBLE" />
+    <result column="month" property="month" jdbcType="DOUBLE" />
+    <result column="inserttime" property="inserttime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, day, weather, xun, month, inserttime
+  </sql>
+  <select id="selectRainByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rain
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getrainstation" resultMap="BaseResultMap"  >
+    select distinct name from rain order by name 
+  </select>
+  <select id="Allrain" resultMap="BaseResultMap"  >
+    select * from rain
+    where inserttime = #{inserttime,jdbcType=DATE}
+  </select>
+  <select id="stationrain" resultMap="BaseResultMap"  >
+    select * from rain
+    where name =#{name,jdbcType=VARCHAR} 
+    and  inserttime <![CDATA[ > ]]>  #{start,jdbcType=DATE} and inserttime <![CDATA[ <= ]]> #{end,jdbcType=DATE}
+    order by  inserttime
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rain
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="entity.Rain" >
+    insert into rain (id, name, day, 
+      weather, xun, month, 
+      inserttime)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{day,jdbcType=DOUBLE}, 
+      #{weather,jdbcType=VARCHAR}, #{xun,jdbcType=DOUBLE}, #{month,jdbcType=DOUBLE}, 
+      #{inserttime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="entity.Rain" >
+    insert into rain
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="day != null" >
+        day,
+      </if>
+      <if test="weather != null" >
+        weather,
+      </if>
+      <if test="xun != null" >
+        xun,
+      </if>
+      <if test="month != null" >
+        month,
+      </if>
+      <if test="inserttime != null" >
+        inserttime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="day != null" >
+        #{day,jdbcType=DOUBLE},
+      </if>
+      <if test="weather != null" >
+        #{weather,jdbcType=VARCHAR},
+      </if>
+      <if test="xun != null" >
+        #{xun,jdbcType=DOUBLE},
+      </if>
+      <if test="month != null" >
+        #{month,jdbcType=DOUBLE},
+      </if>
+      <if test="inserttime != null" >
+        #{inserttime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="entity.Rain" >
+    update rain
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="day != null" >
+        day = #{day,jdbcType=DOUBLE},
+      </if>
+      <if test="weather != null" >
+        weather = #{weather,jdbcType=VARCHAR},
+      </if>
+      <if test="xun != null" >
+        xun = #{xun,jdbcType=DOUBLE},
+      </if>
+      <if test="month != null" >
+        month = #{month,jdbcType=DOUBLE},
+      </if>
+      <if test="inserttime != null" >
+        inserttime = #{inserttime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="entity.Rain" >
+    update rain
+    set name = #{name,jdbcType=VARCHAR},
+      day = #{day,jdbcType=DOUBLE},
+      weather = #{weather,jdbcType=VARCHAR},
+      xun = #{xun,jdbcType=DOUBLE},
+      month = #{month,jdbcType=DOUBLE},
+      inserttime = #{inserttime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
